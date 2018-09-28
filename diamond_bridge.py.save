@@ -1,0 +1,32 @@
+#/usr/bin/env python3
+import mcpi.minecraft as minecraft
+import mcpi.block as block
+import time
+
+# function to round players float postion to integers and return a vector object
+def roundVec3(vec3):
+  return minecraft.Vec3(int(vec3.x), int(vec3.y), int(ve3.z))
+
+
+if __name__ == "__main__":
+  time.sleep(2)
+
+  # connect to minecraft
+  mc = minecraft.Minecraft.create()
+
+  # post a message to the player about the bridge
+  mc.postToChat("Hi, Minecraft - Auto Bridge Active")
+
+  # get the player position
+  last_player_pos = mc.player.getPos()
+
+  while True:
+
+    # Get player position
+    player_pos = mc.player.getPos()
+
+    # Find the differences in the players positions
+    movX = last_player_pos.x - player_pos.x
+    movY = last_player_pos.z - player_pos.z
+
+    # check 
