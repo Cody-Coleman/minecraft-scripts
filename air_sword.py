@@ -39,23 +39,15 @@ class air_sword():
     def check_air_sword(self, hit_list):
         if self.enable:
             for hit in hit_list:
-                self.mc.postToChat("HIT CHECKER")
                 hit_block_data = self.mc.getBlockWithData(hit.pos)
                 hit_block_pos = hit.pos
                 next_block_pos = Vec3(hit.pos.x, hit.pos.y+1, hit.pos.z)
                 next_block_data = self.mc.getBlockWithData(next_block_pos)
                 if hit_block_data.id != 0 and next_block_data.id == 0:
-                    self.mc.postToChat("Block found floating now")
+                    # self.mc.postToChat("Block found floating now")
                     t1 = Thread(target=self.float_block, args=(hit_block_pos, hit_block_data, next_block_pos, next_block_data))
                     t1.setDaemon(True)
                     t1.start()
-                    # for i in range(1, 10):
-                    #     # self.mc.postToChat("hit_block: {}\nnext_block: {}".format(hit_block_data.id, next_block_data.id))
-                    #     self.mc.setBlock(hit_block_pos, 0)
-                    #     self.mc.setBlock(next_block_pos, hit_block_data.id, 0)
-                    #     hit_block_pos = Vec3(next_block_pos.x, next_block_pos.y, next_block_pos.z)
-                    #     next_block_pos = Vec3(next_block_pos.x, next_block_pos.y+1, next_block_pos.z)
-                    #     sleep(0.5)
                     break
     def float_block(self, hit_block_pos, hit_block_data, next_block_pos, next_block_data):
         self.mc.postToChat("Block found floating now")
