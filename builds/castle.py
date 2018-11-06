@@ -161,7 +161,7 @@ def create_windows(mc, posx, posy, posz, dir):
         a = 0
     if dir == "E":
         a = 1
-    mc.setBlock(x1, posy - 1, z1, block.STONE_BRICK, a)
+    mc.setBlock(x1, posy - 1, z1, 109, a)
     mc.setBlock(x2, posy - 1, z2, 109, a)
 
 
@@ -170,22 +170,22 @@ def create_windows(mc, posx, posy, posz, dir):
 # Main Script
 #
 # --------------------------------------
-pos = mc.player.getPos()
-x = pos.x
-y = pos.y
-z = pos.z
-
-print("Create ground and moat")
-# create_landscape(33, 10, 23)
-
-print("Create outer walls")
-create_walls(x, y, z, 21, 5, block.STONE_BRICK, True, True)
-
-print("Create inner walls")
-create_walls(x, y, z, 13, 6, block.STONE_BRICK, True, True)
-
-print("Create Keep with 4 levels")
-create_keep(x, y, z, 5, 4)
-
-print("Position player on Keep's walkway")
+# pos = mc.player.getPos()
+# x = pos.x
+# y = pos.y
+# z = pos.z
+#
+# print("Create ground and moat")
+# # create_landscape(33, 10, 23)
+#
+# print("Create outer walls")
+# create_walls(x, y, z, 21, 5, block.STONE_BRICK, True, True)
+#
+# print("Create inner walls")
+# create_walls(x, y, z, 13, 6, block.STONE_BRICK, True, True)
+#
+# print("Create Keep with 4 levels")
+# create_keep(x, y, z, 5, 4)
+#
+# print("Position player on Keep's walkway")
 
