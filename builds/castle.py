@@ -16,7 +16,7 @@
 
 # Import Minecraft libraries
 import mcpi.block as block
-
+from time import sleep
 
 # mc.postToChat("Let's build a castle!")
 
@@ -40,6 +40,7 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK.
     :param walkway: If set will add a walkway to the wall
     :return:
     """
+    mc.postToChat("Creating Walls")
     # WALL 1
     mc.setBlocks(posx - size, posy + 1, posz - size, posx + size, posy + height, posz - size, material, modifier)
     # WALL 2
@@ -48,8 +49,10 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK.
     mc.setBlocks(posx + size, posy + 1, posz + size, posx - size, posy + height, posz + size, material, modifier)
     # WALL 4
     mc.setBlocks(posx + size, posy + 1, posz + size, posx + size, posy + height, posz - size, material, modifier)
+    sleep(5)
 
     if battlements:
+        mc.postToChat("Creating battlements")
         for i in range(0, (2 * size) + 1, 2):
             # WALL 1
             mc.setBlock(((posx - size) + i), posy + height + 1, posz - size, material, modifier)
@@ -67,6 +70,7 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK.
             mc.setBlock(posx + size, posy + height + 2, ((posz - size) + i), block.TORCH.id, 5)
 
     if walkway:
+        mc.postToChat("Creating Walkways")
         # WALL 1
         mc.setBlocks(posx - size + 1, posy + height - 1, posz - size + 1,
                      posx + size - 1, posy + height - 1, posz - size + 1,
@@ -97,23 +101,28 @@ def create_landscape(mc, posx, posy, posz, size, moat_depth=3):
     """
     island_size = size * 2
     moat_size = (size * 2) + 3
-    print(f"x: {posx}, y: {posy}, z: {posz}")
 
     # Set upper half to air
-    print("setting upper half to air")
+    mc.postToChat("setting upper half to air")
     mc.setBlocks(posx - moat_size, posy-4, posz - moat_size,
                  posx + moat_size, posy + 25, posz + moat_size, block.AIR.id)
+    sleep(10)
 
     # Create water moat
-    mc.setBlocks(posx - moat_size, posy - 1, posz - moat_size,
+    mc.postToChat("Setting up moat")
+    mc.setBlocks(posx - moat_size, posy, posz - moat_size,
                  posx + moat_size, posy - moat_depth, posz + moat_size,
                  block.WATER.id)
 
+    sleep(5)
+
     # Set lower half of world to dirt with a layer of grass
+    mc.postToChat("Creating Land")
     mc.setBlocks(posx - island_size, posy, posz - island_size,
                  posx + island_size, posy - 4, posz + island_size, block.DIRT.id)
 
     # create island
+    mc.postToChat("Creating Grass")
     mc.setBlocks(posx - island_size, posy, posz - island_size,
                  posx + island_size, posy, posz + island_size, block.GRASS.id)
 
@@ -131,8 +140,10 @@ def create_keep(mc, posx, posy, posz, size, levels):
     """
     # Create a keep with a specified number
     # of floors levels and a roof
+    levels += 1
+    mc.postToChat("Creating Keep")
     height = (levels * 5) + 5
-    create_walls(mc, posx, posy, posz, size, height)
+    create_walls(mc, posx, posy-6, posz, size, height)
     # Floors and Windows
     for level in range(1, levels + 1):
         mc.setBlocks(posx - size + 1, (level * 5) + posy, posz - size + 1,
@@ -140,10 +151,13 @@ def create_keep(mc, posx, posy, posz, size, levels):
                      block.STONE_BRICK.id, 2)
     # Windows
     for level in range(1, levels + 1):
-        create_windows(mc, posx + 0, (level * 5) + posy + 2, posz + size, "N")
-        create_windows(mc, posx + 0, (level * 5) + posy + 2, posz - size, "S")
-        create_windows(mc, posx - size, (level * 5) + posy + 2, posz + 0, "W")
-        create_windows(mc, posx - size, (level * 5) + posy + 2, posz + 0, "E")
+        # WALL 3
+        create_windows(mc, posx, (level * 5) + posy + 2, posz + size, "N")
+        # WALL 1
+        create_windows(mc, posx, (level * 5) + posy + 2, posz - size, "S")
+        # WALL
+        create_windows(mc, posx - size, (level * 5) + posy + 2, posz, "W")
+        create_windows(mc, posx + size, (level * 5) + posy + 2, posz, "E")
     # Door
     mc.setBlocks(posx - 1, posy + 1, posz - size, posx + 1, posy + 2, posz - size, block.AIR.id)
 
@@ -160,15 +174,20 @@ def create_windows(mc, posx, posy, posz, direction):
     if direction == "N" or direction == "S":
         z1 = posz
         z2 = posz
-        x1 = posx - 2
-        x2 = posx + 2
+        z3 = posz
+        x1 = posx - 3
+        x2 = posx + 3
+        x3 = posx
     if direction == "E" or direction == "W":
-        z1 = posz - 2
-        z2 = posz + 2
+        z1 = posz - 3
+        z2 = posz + 3
+        z3 = posz
         x1 = posx
         x2 = posx
+        x3 = posx
     mc.setBlocks(x1, posy, z1, x1, posy + 1, z1, block.GLASS_PANE.id)
     mc.setBlocks(x2, posy, z2, x2, posy + 1, z2, block.GLASS_PANE.id)
+    mc.setBlocks(x3, posy, z3, x3, posy + 1, z3, block.GLASS_PANE.id)
     if direction == "N":
         a = 3
     if direction == "S":
@@ -179,6 +198,7 @@ def create_windows(mc, posx, posy, posz, direction):
         a = 1
     mc.setBlock(x1, posy - 1, z1, 109, a)
     mc.setBlock(x2, posy - 1, z2, 109, a)
+    mc.setBlock(x3, posy - 1, z3, 109, a)
 
 
 def create_castle(mc, posx, posy, posz, size=10):
