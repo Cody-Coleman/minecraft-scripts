@@ -24,7 +24,7 @@ import mcpi.block as block
 # --------------------------------------
 # Define Functions
 # --------------------------------------
-def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK, modifier=1, battlements=True,
+def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK.id, modifier=1, battlements=True,
                  walkway=True):
     """
     Creates 4 walls in a box, that are size long and height tall out of material
@@ -53,12 +53,18 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK,
         for i in range(0, (2 * size) + 1, 2):
             # WALL 1
             mc.setBlock(((posx - size) + i), posy + height + 1, posz - size, material, modifier)
+            mc.setBlock(((posx - size) + i), posy + height + 2, posz - size, block.TORCH.id, 5)
             # WALL 2
             mc.setBlock(posx - size, posy + height + 1, ((posz - size) + i), material, modifier)
+            mc.setBlock(posx - size, posy + height + 2, ((posz - size) + i), block.TORCH.id, 5)
+
             # WALL 3
             mc.setBlock(((posx - size) + i), posy + height + 1, posz + size, material, modifier)
+            mc.setBlock(((posx - size) + i), posy + height + 1, posz + size, block.TORCH.id, 5)
+
             # WALL 4
             mc.setBlock(posx + size, posy + height + 1, ((posz - size) + i), material, modifier)
+            mc.setBlock(posx + size, posy + height + 1, ((posz - size) + i), block.TORCH.id, 5)
 
     if walkway:
         # WALL 1
@@ -97,7 +103,7 @@ def create_landscape(mc, posx, posy, posz, size, moat_depth=3):
                  posx + moat_size, posy + 25, posz + moat_size, block.AIR.id)
 
     # Create water moat
-    mc.setBlocks(posx - moat_size, posy, posz - moat_size,
+    mc.setBlocks(posx - moat_size, posy - 1, posz - moat_size,
                  posx + moat_size, posy - moat_depth, posz + moat_size,
                  block.WATER.id)
 
@@ -107,7 +113,7 @@ def create_landscape(mc, posx, posy, posz, size, moat_depth=3):
 
     # create island
     mc.setBlocks(posx - island_size, posy, posz - island_size,
-                 posx + island_size, posy, posz - island_size, block.GRASS.id)
+                 posx + island_size, posy + 1, posz - island_size, block.GRASS.id)
 
 
 
@@ -124,7 +130,7 @@ def create_keep(mc, posx, posy, posz, size, levels):
     # Create a keep with a specified number
     # of floors levels and a roof
     height = (levels * 5) + 5
-    create_walls(posx, posy, posz, size, height)
+    create_walls(mc, posx, posy, posz, size, height)
     # Floors and Windows
     for level in range(1, levels + 1):
         mc.setBlocks(posx - size + 1, (level * 5) + posy, posz - size + 1,
@@ -188,7 +194,7 @@ def create_castle(mc, posx, posy, posz, size=10):
     create_landscape(mc, posx, posy, posz, size)
     # next create walls
     mc.postToChat("Creating border walls")
-    create_walls(mc, posx, posy, posz, island_width, 5)
+    create_walls(mc, posx, posy, posz, size*2, 5)
     mc.postToChat("Creating Keep")
     create_keep(mc, posx, posy, posz, size, 5)
 
