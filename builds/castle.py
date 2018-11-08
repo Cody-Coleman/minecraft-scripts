@@ -24,7 +24,8 @@ import mcpi.block as block
 # --------------------------------------
 # Define Functions
 # --------------------------------------
-def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK, modifier=1, battlements=True, walkway=True):
+def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK, modifier=1, battlements=True,
+                 walkway=True):
     """
     Creates 4 walls in a box, that are size long and height tall out of material
     :param mc: Minecraft client
@@ -51,12 +52,13 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK,
     if battlements:
         for i in range(0, (2 * size) + 1, 2):
             # WALL 1
-            mc.setBlock(posx - size, posy + height + 1, (i - (posz - size)), material)
+            mc.setBlock(((posx - size) + i), posy + height + 1, posz - size, material, modifier)
             # WALL 2
-            mc.setBlock(posx - size, posy + height + 1, (i - (posz - size)), material)
+            mc.setBlock(posx - size, posy + height + 1, ((posz - size) + i), material, modifier)
             # WALL 3
-            mc.setBlock((i - (posx + size)), posy + height + 1, posz + size, material)
-            mc.setBlock((i - (posx + size)), posy + height + 1, posz + size, material)
+            mc.setBlock(((posx - size) + i), posy + height + 1, posz + size, material, modifier)
+            # WALL 4
+            mc.setBlock(posx + size, posy + height + 1, ((posz - size) + i), material, modifier)
 
     if walkway:
         # WALL 1
@@ -77,30 +79,36 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK,
                      block.STONE_SLAB.id, 2)
 
 
-def create_landscape(mc, posx, posy, posz, moat_width, moat_depth, island_width):
+def create_landscape(mc, posx, posy, posz, size, moat_depth=3):
     """
-    Sets upper half to air and creates an island with a moat
+    Sets upper half to air and creates an island with a moat floating in the air
     :param mc: Minecraft client
+    :param size: the initial size of everything, the island and moat are multiples of this
     :param posx: The starting x position for the island, where it will center on
     :param posy: The starting y position for the island
     :param posz: The starting z position for the island
-    :param moat_width: How wide a moat there needs to be
     :param moat_depth: How deep the moat
-    :param island_width: How big an island
     """
+    island_size = size * 2
+    moat_size = (size * 2) + 3
+
     # Set upper half to air
-    mc.setBlocks(posx - 128, posy + 1, posz - 128, posx + 128, posy + 128, posz + 128, block.AIR.id)
-    # Set lower half of world to dirt with a layer of grass
-    mc.setBlocks(posx - 128, posy - 1, posz - 128, posx + 128, posy - 4, posz + 128, block.DIRT.id)
-    mc.setBlocks(posx - 128, posy, posz - 128, posx + 128, posy, posz - 128, block.GRASS.id)
+    mc.setBlocks(posx - moat_size, posy + 1, posz - moat_size,
+                 posx + moat_size, posy + 25, posz + moat_size, block.AIR.id)
+
     # Create water moat
-    mc.setBlocks(posx - moat_width, posy, posz - moat_width,
-                 posx + moat_width, posy - moat_depth, posz + moat_width,
+    mc.setBlocks(posx - moat_size, posy, posz - moat_size,
+                 posx + moat_size, posy - moat_depth, posz + moat_size,
                  block.WATER.id)
-    # Create island inside moat
-    mc.setBlocks(posx - island_width, posy, posz - island_width,
-                 posx - island_width, posy + 1, posz - island_width,
-                 block.GRASS.id)
+
+    # Set lower half of world to dirt with a layer of grass
+    mc.setBlocks(posx - island_size, posy - 1, posz - island_size,
+                 posx + island_size, posy - 4, posz + island_size, block.DIRT.id)
+
+    # create island
+    mc.setBlocks(posx - island_size, posy, posz - island_size,
+                 posx + island_size, posy, posz - island_size, block.GRASS.id)
+
 
 
 def create_keep(mc, posx, posy, posz, size, levels):
@@ -129,7 +137,7 @@ def create_keep(mc, posx, posy, posz, size, levels):
         create_windows(posx - size, (level * 5) + posy + 2, posz + 0, "W")
         create_windows(posx - size, (level * 5) + posy + 2, posz + 0, "E")
     # Door
-    mc.setBlocks(posx + 0, posy + 1, posz + size, posx + 0, posy + 2, posz + size, block.AIR.id)
+    mc.setBlocks(posx - 1, posy + 1, posz - size, posx + 1, posy + 2, posz - size, block.AIR.id)
 
 
 def create_windows(mc, posx, posy, posz, dir):
@@ -165,6 +173,25 @@ def create_windows(mc, posx, posy, posz, dir):
     mc.setBlock(x2, posy - 1, z2, 109, a)
 
 
+def create_castle(mc, posx, posy, posz, size=10):
+    """
+    Creates the castle in the sky, uses the initial positions and size to determine all other values
+    :param mc: minecraft client
+    :param size: How big the keep is, affects the island, walls and moat as a result
+    :param posx: where the x center should start
+    :param posy: where the y should start, castle then moves up 10 spaces
+    :param posz: where the z center should start
+    """
+    # first create landscape
+    posy = posy+10
+    mc.postToChat("Creating Landscape")
+    create_landscape(mc, posx, posy, posz, size)
+    # next create walls
+    mc.postToChat("Creating border walls")
+    create_walls(mc, posx, posy, posz, island_width, 5)
+    mc.postToChat("Creating Keep")
+    create_keep(mc, posx, posy, posz, size, 5)
+
 # --------------------------------------
 #
 # Main Script
@@ -188,4 +215,3 @@ def create_windows(mc, posx, posy, posz, dir):
 # create_keep(x, y, z, 5, 4)
 #
 # print("Position player on Keep's walkway")
-
