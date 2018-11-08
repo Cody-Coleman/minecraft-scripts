@@ -60,11 +60,11 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK.
 
             # WALL 3
             mc.setBlock(((posx - size) + i), posy + height + 1, posz + size, material, modifier)
-            mc.setBlock(((posx - size) + i), posy + height + 1, posz + size, block.TORCH.id, 5)
+            mc.setBlock(((posx - size) + i), posy + height + 2, posz + size, block.TORCH.id, 5)
 
             # WALL 4
             mc.setBlock(posx + size, posy + height + 1, ((posz - size) + i), material, modifier)
-            mc.setBlock(posx + size, posy + height + 1, ((posz - size) + i), block.TORCH.id, 5)
+            mc.setBlock(posx + size, posy + height + 2, ((posz - size) + i), block.TORCH.id, 5)
 
     if walkway:
         # WALL 1
@@ -76,12 +76,12 @@ def create_walls(mc, posx, posy, posz, size, height, material=block.STONE_BRICK.
                      posx - size + 1, posy + height - 1, posz + size - 1,
                      block.STONE_SLAB.id, 2)
         # WALL 3
-        mc.setBlocks(posx + size + 1, posy + height - 1, posz + size - 1,
-                     posx - size - 1, posy + height - 1, posz + size - 1,
+        mc.setBlocks(posx + size - 1, posy + height - 1, posz + size - 1,
+                     posx - size + 1, posy + height - 1, posz + size - 1,
                      block.STONE_SLAB.id, 2)
         # WALL 4
-        mc.setBlocks(posx + size - 1, posy + height - 1, posz + size + 1,
-                     posx + size - 1, posy + height - 1, posz - size - 1,
+        mc.setBlocks(posx + size - 1, posy + height - 1, posz - size + 1,
+                     posx + size - 1, posy + height - 1, posz + size - 1,
                      block.STONE_SLAB.id, 2)
 
 
@@ -97,9 +97,11 @@ def create_landscape(mc, posx, posy, posz, size, moat_depth=3):
     """
     island_size = size * 2
     moat_size = (size * 2) + 3
+    print(f"x: {posx}, y: {posy}, z: {posz}")
 
     # Set upper half to air
-    mc.setBlocks(posx - moat_size, posy + 1, posz - moat_size,
+    print("setting upper half to air")
+    mc.setBlocks(posx - moat_size, posy-4, posz - moat_size,
                  posx + moat_size, posy + 25, posz + moat_size, block.AIR.id)
 
     # Create water moat
@@ -108,12 +110,12 @@ def create_landscape(mc, posx, posy, posz, size, moat_depth=3):
                  block.WATER.id)
 
     # Set lower half of world to dirt with a layer of grass
-    mc.setBlocks(posx - island_size, posy - 1, posz - island_size,
+    mc.setBlocks(posx - island_size, posy, posz - island_size,
                  posx + island_size, posy - 4, posz + island_size, block.DIRT.id)
 
     # create island
     mc.setBlocks(posx - island_size, posy, posz - island_size,
-                 posx + island_size, posy + 1, posz - island_size, block.GRASS.id)
+                 posx + island_size, posy, posz + island_size, block.GRASS.id)
 
 
 
@@ -138,42 +140,42 @@ def create_keep(mc, posx, posy, posz, size, levels):
                      block.STONE_BRICK.id, 2)
     # Windows
     for level in range(1, levels + 1):
-        create_windows(posx + 0, (level * 5) + posy + 2, posz + size, "N")
-        create_windows(posx + 0, (level * 5) + posy + 2, posz - size, "S")
-        create_windows(posx - size, (level * 5) + posy + 2, posz + 0, "W")
-        create_windows(posx - size, (level * 5) + posy + 2, posz + 0, "E")
+        create_windows(mc, posx + 0, (level * 5) + posy + 2, posz + size, "N")
+        create_windows(mc, posx + 0, (level * 5) + posy + 2, posz - size, "S")
+        create_windows(mc, posx - size, (level * 5) + posy + 2, posz + 0, "W")
+        create_windows(mc, posx - size, (level * 5) + posy + 2, posz + 0, "E")
     # Door
     mc.setBlocks(posx - 1, posy + 1, posz - size, posx + 1, posy + 2, posz - size, block.AIR.id)
 
 
-def create_windows(mc, posx, posy, posz, dir):
+def create_windows(mc, posx, posy, posz, direction):
     """
     Creates windows in keep
     :param mc: the minecraft client
     :param posx: x starting position
     :param posy: y starting position
     :param posz: z starting position
-    :param dir: what direction this is facing
+    :param direction: what direction this is facing
     """
-    if dir == "N" or dir == "S":
+    if direction == "N" or direction == "S":
         z1 = posz
         z2 = posz
         x1 = posx - 2
         x2 = posx + 2
-    if dir == "E" or dir == "W":
+    if direction == "E" or direction == "W":
         z1 = posz - 2
         z2 = posz + 2
         x1 = posx
         x2 = posx
     mc.setBlocks(x1, posy, z1, x1, posy + 1, z1, block.GLASS_PANE.id)
     mc.setBlocks(x2, posy, z2, x2, posy + 1, z2, block.GLASS_PANE.id)
-    if dir == "N":
+    if direction == "N":
         a = 3
-    if dir == "S":
+    if direction == "S":
         a = 2
-    if dir == "W":
+    if direction == "W":
         a = 0
-    if dir == "E":
+    if direction == "E":
         a = 1
     mc.setBlock(x1, posy - 1, z1, 109, a)
     mc.setBlock(x2, posy - 1, z2, 109, a)
