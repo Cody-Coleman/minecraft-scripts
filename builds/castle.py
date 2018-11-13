@@ -229,9 +229,15 @@ def create_castle(mc, posx, posy, posz, size=10):
 if __name__ == '__main__':
     minecraft_client = Minecraft.create(sys.argv[1])
     pos = minecraft_client.player.getPos()
-    pos_x = int(pos.x)
-    pos_y = int(pos.y)
-    pos_z = int(pos.z)
+    if len(sys.argv) > 2:
+        positions = sys.argv[2].split(',')
+        pos_x = int(pos.x)
+        pos_y = int(pos.y)
+        pos_z = int(pos.z)
+    else:
+        pos_x = int(pos.x)
+        pos_y = int(pos.y)
+        pos_z = int(pos.z)
     create_castle(minecraft_client, pos_x, pos_y, pos_z)
 # --------------------------------------
 #
