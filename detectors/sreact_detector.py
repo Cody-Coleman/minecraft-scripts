@@ -1,5 +1,6 @@
-import sys
+#! /usr/bin/env python3
 
+import sys
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
