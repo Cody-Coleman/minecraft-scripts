@@ -12,6 +12,6 @@ if __name__ == '__main':
     player_name = sys.argv[1]
     pin = player_dict[player_name]
     action = action_dict[sys.argv[2]]
-    print(f"Player: {player_name}\tPin: {pin}\tAction: {action}}")
+    print(f"Player: {player_name}\tPin: {pin}\tAction: {action}")
     GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, action)
