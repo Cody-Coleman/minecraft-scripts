@@ -6,7 +6,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-player_dict = {'waffleman1793': 13, 'zzz': 6, 'jojo_pie': 5}
+player_dict = {'waffleman1793': 13, 'kid_gamer_888': 6, 'jojo_pie': 5, 'yaboidatboi': 6}
 action_dict = {'joined': GPIO.HIGH, 'left': GPIO.LOW}
 
 if __name__ == '__main__':
